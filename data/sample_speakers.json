@@ -1,0 +1,18 @@
+[
+  {
+    "id": "speaker_001",
+    "name": "Maria Torres",
+    "topics": ["Flutter", "AI apps"],
+    "availability": ["Saturday afternoon"],
+    "rating": 4.8,
+    "status": "available"
+  },
+  {
+    "id": "speaker_002",
+    "name": "Luis Mendoza",
+    "topics": ["Firebase", "Gemini", "Backend"],
+    "availability": ["Saturday afternoon"],
+    "rating": 4.6,
+    "status": "pending_confirmation"
+  }
+]

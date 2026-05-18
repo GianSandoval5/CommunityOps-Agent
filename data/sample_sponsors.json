@@ -1,0 +1,16 @@
+[
+  {
+    "id": "sponsor_001",
+    "name": "Tech Sponsor Piura",
+    "sponsorshipType": "coffee_break",
+    "status": "pending",
+    "contactPriority": "high"
+  },
+  {
+    "id": "sponsor_002",
+    "name": "Local Coworking Hub",
+    "sponsorshipType": "venue",
+    "status": "warm_lead",
+    "contactPriority": "medium"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "id": "attendee_001",
+    "name": "Juan Perez",
+    "interests": ["Flutter", "Firebase", "AI"],
+    "attendanceHistory": 3
+  },
+  {
+    "id": "attendee_002",
+    "name": "Andrea Rojas",
+    "interests": ["Mobile", "Product", "Communities"],
+    "attendanceHistory": 2
+  }
+]
