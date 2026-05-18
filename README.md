@@ -8,6 +8,7 @@ Built by **Gian Sandoval** for the Google Cloud Agent Builder + Gemini hackathon
 
 - GitHub: [@GianSandoval5](https://github.com/GianSandoval5)
 - LinkedIn: [giansandoval](https://www.linkedin.com/in/giansandoval)
+- Live demo: [giansandoval.com/communityops_agent](https://giansandoval.com/communityops_agent)
 - License: [MIT](LICENSE)
 
 ## Why This Exists
@@ -56,6 +57,10 @@ MongoDB is used as the operational memory and persistence layer for:
 The current MVP persists approved outputs to MongoDB Atlas through the backend. The repository also includes MCP-oriented agent documentation in [`agent/tools.md`](agent/tools.md) and [`agent/workflows.md`](agent/workflows.md), so the workflow can be connected to a MongoDB MCP server as the hackathon environment requires.
 
 ## Demo Scenario
+
+Live project URL:
+
+[https://giansandoval.com/communityops_agent](https://giansandoval.com/communityops_agent)
 
 Prompt used in the demo:
 
