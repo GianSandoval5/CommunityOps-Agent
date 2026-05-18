@@ -80,6 +80,7 @@ The agent creates:
 
 - **Beyond chat:** the agent creates operational artifacts and writes approved records.
 - **Human control:** important writes happen only after approval.
+- **Domain guardrail:** off-topic prompts are blocked from execution and persistence.
 - **Real persistence:** approved runs are stored in MongoDB Atlas.
 - **Visible trace:** the dashboard shows agent steps, readiness score, Gemini status, MongoDB sync status, and run ID.
 - **Practical problem:** the workflow is grounded in real community event operations.
@@ -130,6 +131,7 @@ MongoDB Atlas
 - Event readiness score.
 - Agent run timeline.
 - Human approval before persistence.
+- Domain guardrail for non-event prompts.
 - MongoDB-backed event memory.
 - Speaker invitation drafts.
 - Sponsor follow-up drafts.

@@ -12,11 +12,18 @@ export class AgentGatewayService {
 
   async planEvent(request: EventGoalRequest): Promise<AgentRun> {
     const runId = request.runId ?? `run_${Date.now()}`;
+    const goal = request.goal.trim();
+
+    if (!this.isEventOperationsGoal(goal)) {
+      const guardedRun = this.createOutOfScopeRun(runId, goal);
+      this.lastRun = guardedRun;
+      return guardedRun;
+    }
 
     const fallbackRun: AgentRun = {
       id: runId,
       status: 'awaiting_approval',
-      goal: request.goal,
+      goal,
       readinessScore: 72,
       event: {
         name: 'Flutter Piura Meetup: Flutter + AI',
@@ -148,7 +155,7 @@ export class AgentGatewayService {
       ],
     };
 
-    const run = await this.planner.createPlan(request.goal, fallbackRun);
+    const run = await this.planner.createPlan(goal, fallbackRun);
     await this.trySaveDraftRun(run);
 
     this.lastRun = run;
@@ -204,6 +211,108 @@ export class AgentGatewayService {
 
     this.lastRun = finalRun;
     return finalRun;
+  }
+
+  private isEventOperationsGoal(goal: string): boolean {
+    const normalizedGoal = goal
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+
+    const eventTerms = [
+      'evento',
+      'meetup',
+      'charla',
+      'taller',
+      'workshop',
+      'comunidad',
+      'community',
+      'speaker',
+      'speakers',
+      'ponente',
+      'ponentes',
+      'sponsor',
+      'patrocinador',
+      'asistente',
+      'asistentes',
+      'agenda',
+      'coffee break',
+      'certificado',
+      'certificados',
+      'flutter piura',
+    ];
+
+    const actionTerms = [
+      'organiza',
+      'organizar',
+      'planifica',
+      'planificar',
+      'prepara',
+      'preparar',
+      'coordina',
+      'coordinar',
+      'crea',
+      'crear',
+      'gestiona',
+      'gestionar',
+    ];
+
+    return eventTerms.some((term) => normalizedGoal.includes(term)) &&
+      actionTerms.some((term) => normalizedGoal.includes(term));
+  }
+
+  private createOutOfScopeRun(runId: string, goal: string): AgentRun {
+    return {
+      id: runId,
+      status: 'draft',
+      goal,
+      readinessScore: 0,
+      event: {
+        name: 'Objetivo de evento requerido',
+        dateLabel: 'Pendiente',
+        location: 'Pendiente',
+        capacity: 0,
+        budget: 0,
+        status: 'needs_event_goal',
+        topics: ['CommunityOps'],
+      },
+      agenda: [
+        'Describe un evento, meetup, taller o actividad de comunidad para que el agente pueda planificarlo.',
+      ],
+      speakers: [],
+      sponsors: [],
+      tasks: [
+        {
+          title: 'Definir objetivo del evento',
+          owner: 'Organizador',
+          priority: 'high',
+          deadline: 'Antes de planificar',
+          status: 'pending',
+        },
+      ],
+      messages: [],
+      risks: [
+        {
+          title: 'Solicitud fuera del flujo operativo',
+          detail: 'CommunityOps Agent solo planifica y ejecuta operaciones de eventos de comunidad bajo aprobacion humana.',
+          level: 'medium',
+        },
+      ],
+      steps: [
+        {
+          title: 'Solicitud revisada',
+          detail: 'El mensaje no contiene una mision clara de organizacion de evento.',
+          tool: 'Domain guardrail',
+          done: true,
+        },
+        {
+          title: 'Ejecucion bloqueada',
+          detail: 'No se llamo a Gemini para ejecutar una accion ni se escribio en MongoDB.',
+          tool: 'Safety checkpoint',
+          done: false,
+        },
+      ],
+    };
   }
 
   private async trySaveDraftRun(run: AgentRun): Promise<void> {

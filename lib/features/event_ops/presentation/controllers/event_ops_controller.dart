@@ -44,6 +44,15 @@ class EventOpsController extends ChangeNotifier {
     try {
       final result = await _repository.planMeetup(trimmedGoal);
       _plan = result;
+      if (result.status == AgentRunStatus.draft) {
+        _chat.add(
+          const ChatEntry(
+            author: ChatAuthor.agent,
+            text: 'Puedo ayudarte con operaciones de eventos de comunidad. Enviame una mision como: organiza un meetup, coordina speakers, prepara sponsors, crea tareas o arma una agenda.',
+          ),
+        );
+        return;
+      }
       _chat.add(
         ChatEntry(
           author: ChatAuthor.agent,
