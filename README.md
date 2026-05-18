@@ -1,64 +1,105 @@
 # CommunityOps Agent
 
-AI-powered event operations assistant for tech communities, built for the Google Cloud Agent Builder + Gemini hackathon and the MongoDB partner track.
+**AI event operations assistant for tech communities.**
 
-CommunityOps Agent helps organizers plan meetups, coordinate speakers, manage sponsors, create tasks, detect risks, draft communications, request human approval, and persist the approved plan in MongoDB Atlas.
+CommunityOps Agent turns a high-level community event goal into an executable operations plan: agenda, tasks, risks, speaker outreach, sponsor follow-up, message drafts, approval checkpoints, and MongoDB persistence.
 
-## Author
-
-Created by **Gian Sandoval**.
+Built by **Gian Sandoval** for the Google Cloud Agent Builder + Gemini hackathon, targeting the **MongoDB partner track**.
 
 - GitHub: [@GianSandoval5](https://github.com/GianSandoval5)
 - LinkedIn: [giansandoval](https://www.linkedin.com/in/giansandoval)
+- License: [MIT](LICENSE)
 
-## Hackathon Track
+## Why This Exists
 
-Recommended track: **MongoDB**.
+Community events are often coordinated across WhatsApp chats, spreadsheets, notes, memory, and last-minute reminders. That creates repeated planning work, missed tasks, unclear ownership, weak sponsor follow-up, and poor continuity between events.
 
-MongoDB Atlas is used as the agent's operational memory and persistence layer for:
+CommunityOps Agent solves that by giving organizers an operational AI assistant that can:
 
-- events
-- tasks
-- messages
-- risks
-- approvals
-- agent runs
+- understand a real event goal,
+- reason through the logistics,
+- produce an actionable plan,
+- draft communication,
+- detect risk,
+- ask for human approval,
+- and persist the approved plan in MongoDB.
 
-The agent goes beyond chat: it plans, generates operational artifacts, asks for approval, and writes the approved result into the database.
+The initial use case is **Flutter Piura**, but the workflow can apply to developer communities, university clubs, bootcamps, meetups, and local tech groups.
 
-## Core Demo
+## Hackathon Fit
 
-Example user goal:
+This project is designed for the challenge goal: **AI that does not only answer, but helps people act.**
+
+CommunityOps Agent is not just a chatbot. It performs a multi-step supervised workflow:
+
+1. Receives an event objective.
+2. Uses Gemini to generate an operations plan.
+3. Produces event agenda, tasks, risks, and message drafts.
+4. Shows a readiness score and execution timeline.
+5. Requests human approval before important writes.
+6. Persists approved records in MongoDB Atlas.
+7. Displays integration status for Gemini, MongoDB, and the current run.
+
+## Partner Track
+
+**Selected partner: MongoDB**
+
+MongoDB is used as the operational memory and persistence layer for:
+
+- `agent_runs`
+- `events`
+- `tasks`
+- `messages`
+- `risks`
+- `approvals`
+
+The current MVP persists approved outputs to MongoDB Atlas through the backend. The repository also includes MCP-oriented agent documentation in [`agent/tools.md`](agent/tools.md) and [`agent/workflows.md`](agent/workflows.md), so the workflow can be connected to a MongoDB MCP server as the hackathon environment requires.
+
+## Demo Scenario
+
+Prompt used in the demo:
 
 ```txt
 Organiza un meetup de Flutter Piura para 80 personas sobre Flutter + IA,
 con 2 charlas, presupuesto de S/500, coffee break y certificados.
 ```
 
-The system then:
+The agent creates:
 
-1. Uses Gemini to generate an event operations plan.
-2. Suggests agenda, tasks, risks, speakers, sponsors, and message drafts.
-3. Shows readiness score and agent run steps in the Flutter dashboard.
-4. Requires human approval before writing operational data.
-5. Persists the approved run in MongoDB Atlas.
+- event plan,
+- agenda,
+- readiness score,
+- task list,
+- risk analysis,
+- speaker and sponsor recommendations,
+- message drafts,
+- human approval checkpoint,
+- MongoDB records after approval.
+
+## What Judges Should Notice
+
+- **Beyond chat:** the agent creates operational artifacts and writes approved records.
+- **Human control:** important writes happen only after approval.
+- **Real persistence:** approved runs are stored in MongoDB Atlas.
+- **Visible trace:** the dashboard shows agent steps, readiness score, Gemini status, MongoDB sync status, and run ID.
+- **Practical problem:** the workflow is grounded in real community event operations.
 
 ## Architecture
 
 ```txt
-Flutter Web UI
+Flutter Web Dashboard
   |
   v
-Backend API / Agent Gateway
+Node.js / Express Agent Gateway
   |
   v
-Gemini API / Agent reasoning
+Gemini API
   |
   v
 MongoDB Atlas
 ```
 
-Planned/compatible hackathon framing:
+Hackathon framing:
 
 ```txt
 Google Cloud Agent Builder + Gemini
@@ -73,14 +114,29 @@ MongoDB Atlas
 ## Tech Stack
 
 - Flutter Web
-- Node.js + TypeScript
+- Dart
+- Node.js
+- TypeScript
 - Express
 - Gemini API
 - MongoDB Atlas
 - MongoDB Node.js Driver
 - Google Cloud / Agent Platform setup
 
-## Project Structure
+## Key Features
+
+- Multi-step event planning.
+- Gemini-generated operations plan.
+- Event readiness score.
+- Agent run timeline.
+- Human approval before persistence.
+- MongoDB-backed event memory.
+- Speaker invitation drafts.
+- Sponsor follow-up drafts.
+- Risk detection.
+- Production-oriented secret handling.
+
+## Repository Structure
 
 ```txt
 communityops_agent/
@@ -115,42 +171,34 @@ communityops_agent/
     setup_steps.md
 ```
 
-## Running Locally
+## Local Setup
 
-Flutter local demo mode:
+Install Flutter dependencies:
 
 ```bash
 flutter pub get
-flutter run -d chrome
 ```
 
-Backend mode:
+Install backend dependencies:
 
 ```bash
 cd backend
 npm install
-npm run dev
 ```
 
-Run Flutter connected to the backend:
+Create the backend environment file:
 
 ```bash
-flutter run -d chrome --dart-define=USE_BACKEND=true --dart-define=API_BASE_URL=http://localhost:8787 --dart-define=GEMINI_MODEL_LABEL="Gemini 3 Pro Preview"
+copy .env.example .env
 ```
 
-Manual setup details are available in [docs/setup_steps.md](docs/setup_steps.md).
+Fill `backend/.env` with your own local secrets.
 
 ## Environment Variables
 
-Create a local file:
+Use [`backend/.env.example`](backend/.env.example) as the template.
 
-```txt
-backend/.env
-```
-
-Use [backend/.env.example](backend/.env.example) as the template.
-
-Required local values:
+Required values:
 
 ```env
 PORT=8787
@@ -163,29 +211,65 @@ GOOGLE_CLOUD_PROJECT_ID=communityops-agent
 GOOGLE_CLOUD_LOCATION=us-central1
 ```
 
-## Security
+Optional placeholders:
 
-Do **not** commit secrets.
+```env
+AGENT_BUILDER_ENDPOINT=
+AGENT_BUILDER_API_KEY=
+```
 
-Never push these files or values to GitHub:
+## Running The App
 
-- `backend/.env`
-- `.env`
-- Gemini API keys
-- MongoDB Atlas connection strings
-- database usernames/passwords
-- service account secrets
+Run backend:
 
-The repository includes `.gitignore` rules for `.env`, `backend/.env`, `node_modules`, `dist`, and Flutter build output. Keep real credentials only in local environment files or your deployment provider's secret manager.
+```bash
+cd backend
+npm run dev
+```
 
-Safe files to commit:
+Run Flutter in local demo mode:
 
-- `backend/.env.example`
-- docs
-- source code
-- sample JSON data without real personal data
+```bash
+flutter run -d chrome
+```
 
-## Deployment Notes
+Run Flutter connected to the backend:
+
+```bash
+flutter run -d chrome --dart-define=USE_BACKEND=true --dart-define=API_BASE_URL=http://localhost:8787 --dart-define=GEMINI_MODEL_LABEL="Gemini 3 Pro Preview"
+```
+
+More setup notes are available in [`docs/setup_steps.md`](docs/setup_steps.md).
+
+## Demo Verification
+
+After planning and approving an event, MongoDB Atlas should contain records in:
+
+```txt
+agent_runs
+approvals
+events
+messages
+risks
+tasks
+```
+
+The backend health endpoint:
+
+```txt
+http://localhost:8787/health
+```
+
+Expected response:
+
+```json
+{
+  "ok": true,
+  "service": "communityops-agent-backend"
+}
+```
+
+## Deployment Target
 
 Recommended production-style deployment:
 
@@ -197,7 +281,7 @@ Cloud Run / backend hosting
   -> Node.js API
 
 MongoDB Atlas
-  -> operational data
+  -> operational database
 
 Gemini API
   -> planning and reasoning
@@ -209,8 +293,35 @@ Flutter web build example:
 flutter build web --base-href /communityops_agent/ --dart-define=USE_BACKEND=true --dart-define=API_BASE_URL=https://YOUR_BACKEND_URL --dart-define=GEMINI_MODEL_LABEL="Gemini 3 Pro Preview"
 ```
 
-## License
+Detailed Cloud Run and `giansandoval.com/communityops_agent` deployment steps are available in [`docs/deploy.md`](docs/deploy.md).
 
-This project is open source under the [MIT License](LICENSE).
+## Security
 
-You are free to use, copy, modify, merge, publish, distribute, sublicense, and sell copies of the software under the license terms. Attribution to the original copyright holder must remain in copies or substantial portions of the software.
+Do **not** commit secrets.
+
+Never push these files or values to GitHub:
+
+- `backend/.env`
+- `.env`
+- Gemini API keys
+- MongoDB Atlas connection strings
+- database usernames/passwords
+- service account credentials
+- private tokens
+
+Safe files to commit:
+
+- `backend/.env.example`
+- source code
+- documentation
+- sample JSON data without real personal data
+
+The repository `.gitignore` already excludes local environment files, `node_modules`, build output, and backend generated output. Keep real secrets in local environment files or deployment provider secret managers.
+
+## Open Source License
+
+CommunityOps Agent is open source under the [MIT License](LICENSE).
+
+Anyone can use, copy, modify, merge, publish, distribute, sublicense, and sell copies of this software under the MIT terms. The copyright notice must remain in copies or substantial portions of the software.
+
+Copyright (c) 2026 Gian Sandoval.
